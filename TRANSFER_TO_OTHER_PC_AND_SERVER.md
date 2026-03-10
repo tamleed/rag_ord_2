@@ -52,29 +52,29 @@ cd rag_ord_2_v2
 
 ---
 
-## 4) Create separate env file for v2
+## 4) Create separate env file for v2 (matching current app.py env names)
 
 Create `/home/ubuntu/rag_ord_2_v2/faq_rag_v2.env`:
 
 ```dotenv
-# Server / model
-API_KEY=...
-BASE_URL=...
-LLM_MODEL=...
-EMBED_MODEL=...
-
 # Qdrant
-QDRANT_URL=http://127.0.0.1:6333
-QDRANT_COLLECTION=faq_collection
-QDRANT_EXACT_SEARCH=true
+QDRANT_URL=http://localhost:6333
+QDRANT_EXACT_SEARCH=1
 
-# Legacy paths (optional fallback)
-QA_DB_PATH=/home/ubuntu/rag_ord_2_v2/qa_db.json
+# Legacy paths (fallback for v1 logic)
+QA_DB_PATH=/home/ubuntu/rag_ord_2_v2/qa_db_merged.json
 TFIDF_VOCAB_PATH=/home/ubuntu/rag_ord_2_v2/tfidf_vocab.json
 
-# V2 dedicated paths (important)
+# V2 dedicated paths
 QA_DB_PATH_V2=/home/ubuntu/rag_ord_2_v2/qa_db_merged.json
 TFIDF_VOCAB_PATH_V2=/home/ubuntu/rag_ord_2_v2/tfidf_vocab.json
+
+# Local LLM endpoint used by app.py
+LOCAL_LLM_URL=https://localgpu2.myapidev.ru/v1/chat/qwen
+LOCAL_LLM_API_KEY=PUT_REAL_KEY_HERE
+
+# FastAPI protection key (X-API-Key header)
+RAG_API_KEY=PUT_REAL_KEY_HERE
 ```
 
 ---
