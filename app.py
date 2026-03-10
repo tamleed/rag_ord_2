@@ -24,6 +24,8 @@ from rag_core import (
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QA_DB_PATH = os.getenv("QA_DB_PATH", "./qa_db.json")
 TFIDF_VOCAB_PATH = os.getenv("TFIDF_VOCAB_PATH", "./tfidf_vocab.json")
+QA_DB_PATH_V2 = os.getenv("QA_DB_PATH_V2", QA_DB_PATH)
+TFIDF_VOCAB_PATH_V2 = os.getenv("TFIDF_VOCAB_PATH_V2", TFIDF_VOCAB_PATH)
 COLLECTION_NAME = "faq"
 QDRANT_EXACT_SEARCH = os.getenv("QDRANT_EXACT_SEARCH", "1") == "1"
 
@@ -52,6 +54,15 @@ QUESTION_INDEX_RAW: Dict[str, List[int]] = build_raw_q_index(ANSWERS)
 QUESTION_INDEX_NORMALIZED: Dict[str, List[int]] = build_normalized_q_index(ANSWERS)
 
 TERM2ID, IDF = load_tfidf_vocab(TFIDF_VOCAB_PATH)
+
+# Отдельные ресурсы для v2 (по умолчанию совпадают с v1, если env не задан).
+ANSWERS_V2: List[Answer] = load_answers(QA_DB_PATH_V2)
+ANSWERS_BY_ID_V2: Dict[int, Answer] = {a.id: a for a in ANSWERS_V2}
+
+QUESTION_INDEX_RAW_V2: Dict[str, List[int]] = build_raw_q_index(ANSWERS_V2)
+QUESTION_INDEX_NORMALIZED_V2: Dict[str, List[int]] = build_normalized_q_index(ANSWERS_V2)
+
+TERM2ID_V2, IDF_V2 = load_tfidf_vocab(TFIDF_VOCAB_PATH_V2)
 
 
 # ---------- Авторизация по API-ключу ----------
@@ -199,7 +210,7 @@ def find_best_faq_match(question: str, threshold: float = 0.3) -> Optional[int]:
     best_id: Optional[int] = None
     best_score = 0.0
 
-    for ans in ANSWERS:
+    for ans in ANSWERS_V2:
         for variant in ans.question_variants:
             score = _token_overlap_score(question, variant)
             if score > best_score:
@@ -209,10 +220,10 @@ def find_best_faq_match(question: str, threshold: float = 0.3) -> Optional[int]:
     if best_score >= threshold:
         q_tokens = _informative_tokens(question)
         # Для общего вопроса про правки креатива приоритетно отдаём расширенный ответ (id=32).
-        if best_id == 15 and {"правк", "креатив"}.issubset(q_tokens) and 32 in ANSWERS_BY_ID:
+        if best_id == 15 and {"правк", "креатив"}.issubset(q_tokens) and 32 in ANSWERS_BY_ID_V2:
             return 32
         # Для вопроса о нескольких целевых ссылках приоритетно отдаём профильный ответ (id=49).
-        if {"целев", "ссылк"}.issubset(q_tokens) and 49 in ANSWERS_BY_ID:
+        if {"целев", "ссылк"}.issubset(q_tokens) and 49 in ANSWERS_BY_ID_V2:
             return 49
         return best_id
     return None
@@ -254,7 +265,7 @@ def retrieve_answers(
 
     # 2. sparse-вектор
     expanded_q = expand_with_synonyms(norm_q)
-    q_indices, q_values = compute_sparse_vector(expanded_q, TERM2ID, IDF)
+    q_indices, q_values = compute_sparse_vector(expanded_q, TERM2ID_V2, IDF_V2)
 
     query_filter = models.Filter(
         must=[models.FieldCondition(key="is_active", match=models.MatchValue(value=True))]
@@ -318,7 +329,7 @@ def retrieve_answers(
         final = ALPHA_DENSE * sd + (1.0 - ALPHA_DENSE) * ss
 
         payload = src_points[ans_id].payload or {}
-        ans = ANSWERS_BY_ID.get(ans_id)
+        ans = ANSWERS_BY_ID_V2.get(ans_id)
         if not ans:
             ans = Answer(
                 id=ans_id,
@@ -420,10 +431,10 @@ def _match_exact_raw_question(question: str) -> Optional[Answer]:
     Только в этом случае отвечаем "как есть" из БЗ и не идём в модель.
     """
     raw_q = question.strip()
-    direct_ids_raw = QUESTION_INDEX_RAW.get(raw_q)
+    direct_ids_raw = QUESTION_INDEX_RAW_V2.get(raw_q)
     if not direct_ids_raw:
         return None
-    return ANSWERS_BY_ID[direct_ids_raw[0]]
+    return ANSWERS_BY_ID_V2[direct_ids_raw[0]]
 
 
 def _match_normalized_question(question: str) -> Optional[Answer]:
@@ -431,10 +442,10 @@ def _match_normalized_question(question: str) -> Optional[Answer]:
     Неточное (нормализованное) совпадение: отдельная ветка после raw exact.
     """
     norm_q = normalize(question)
-    direct_ids_norm = QUESTION_INDEX_NORMALIZED.get(norm_q)
+    direct_ids_norm = QUESTION_INDEX_NORMALIZED_V2.get(norm_q)
     if not direct_ids_norm:
         return None
-    return ANSWERS_BY_ID[direct_ids_norm[0]]
+    return ANSWERS_BY_ID_V2[direct_ids_norm[0]]
 
 def _should_return_two_answers(candidates: List[RetrievedAnswer]) -> bool:
     if len(candidates) < 2:
@@ -569,7 +580,7 @@ def answer_question_logic_v2(question: str):
     # 3. Лексический FAQ-матч для переформулированных "точных" вопросов
     best_faq_id = find_best_faq_match(question)
     if best_faq_id is not None:
-        ans = ANSWERS_BY_ID[best_faq_id]
+        ans = ANSWERS_BY_ID_V2[best_faq_id]
         return {
             "answer": ans.text,
             "answer_source": "faq_exact",
