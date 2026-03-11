@@ -1,8 +1,13 @@
-# Transfer checklist: copy to server, run v2 in parallel, configure nginx
+# Transfer checklist: deploy v2 in parallel to v1 (one server)
 
-Ниже — безопасный сценарий, при котором **v1 остаётся как есть**, а v2 поднимается отдельно.
+Ниже — сценарий для **одного сервера**:
+- v1 в `/home/ubuntu/faq_rag_v1`
+- v2 в `/home/ubuntu/faq_rag_v2`
+- Qdrant в Docker, как на первом проекте (`qdrant/qdrant:latest`, порт `127.0.0.1:6333`)
 
-## 0) Verify the branch with v2 changes on your PC
+---
+
+## 0) Verify branch on PC
 
 ```bash
 git fetch --all --prune
@@ -12,20 +17,13 @@ git status -sb
 git log --oneline -n 5
 ```
 
-Ожидаемо: ветка `codex-update` должна смотреть на `origin/codex/update-project-based-on-tester-feedback`.
-
 ---
 
-## 1) Create archive from the exact branch (Windows PowerShell)
-
-Run from repo root on your PC:
+## 1) Archive project on PC (Windows PowerShell)
 
 ```powershell
-# optional cleanup of Python cache
 Get-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-
-# create zip one level above the repo
-Compress-Archive -Path .\* -DestinationPath ..\rag_ord_2_v2.zip -Force
+Compress-Archive -Path .\* -DestinationPath ..\faq_rag_v2.zip -Force
 ```
 
 ---
@@ -33,83 +31,115 @@ Compress-Archive -Path .\* -DestinationPath ..\rag_ord_2_v2.zip -Force
 ## 2) Copy archive to server
 
 ```powershell
-scp ..\rag_ord_2_v2.zip ubuntu@<SERVER_IP>:/home/ubuntu/
+scp ..\faq_rag_v2.zip ubuntu@<SERVER_IP>:/home/ubuntu/
 ```
 
 ---
 
-## 3) Deploy into a separate folder on server
+## 3) Deploy to `/home/ubuntu/faq_rag_v2`
 
 ```bash
 ssh ubuntu@<SERVER_IP>
 cd /home/ubuntu
-mkdir -p rag_ord_2_v2
-unzip -o rag_ord_2_v2.zip -d rag_ord_2_v2
-cd rag_ord_2_v2
+mkdir -p faq_rag_v2
+unzip -o faq_rag_v2.zip -d faq_rag_v2
+cd faq_rag_v2
 ```
 
-> Важно: не перезаписывайте старую папку v1 проекта.
+> v1 каталог `/home/ubuntu/faq_rag_v1` не трогаем.
 
 ---
 
-## 4) Create separate env file for v2 (matching current app.py env names)
+## 4) Start Qdrant in Docker (same style as v1 server)
 
-Create `/home/ubuntu/rag_ord_2_v2/faq_rag_v2.env`:
+Проверка docker:
+
+```bash
+sudo docker --version
+```
+
+Запуск Qdrant (имя контейнера и проброс порта как в рабочем примере):
+
+```bash
+sudo docker rm -f qdrant || true
+sudo docker run -d \
+  --name qdrant \
+  -p 127.0.0.1:6333:6333 \
+  qdrant/qdrant:latest
+```
+
+Проверка:
+
+```bash
+sudo docker ps --format 'table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Ports}}'
+curl -sS http://127.0.0.1:6333/
+curl -sS http://127.0.0.1:6333/collections
+```
+
+Ожидаемо в `docker ps`:
+
+```text
+qdrant/qdrant:latest   qdrant   127.0.0.1:6333->6333/tcp, 6334/tcp
+```
+
+---
+
+## 5) Create env file for v2
+
+Create `/home/ubuntu/faq_rag_v2/faq_rag_v2.env`:
 
 ```dotenv
-# Qdrant
 QDRANT_URL=http://localhost:6333
 QDRANT_EXACT_SEARCH=1
 
-# Legacy paths (fallback for v1 logic)
-QA_DB_PATH=/home/ubuntu/rag_ord_2_v2/qa_db_merged.json
-TFIDF_VOCAB_PATH=/home/ubuntu/rag_ord_2_v2/tfidf_vocab.json
+# legacy resources in v2 directory
+QA_DB_PATH=/home/ubuntu/faq_rag_v2/qa_db_merged.json
+TFIDF_VOCAB_PATH=/home/ubuntu/faq_rag_v2/tfidf_vocab.json
 
-# V2 dedicated paths
-QA_DB_PATH_V2=/home/ubuntu/rag_ord_2_v2/qa_db_merged.json
-TFIDF_VOCAB_PATH_V2=/home/ubuntu/rag_ord_2_v2/tfidf_vocab.json
+# dedicated v2 resources
+QA_DB_PATH_V2=/home/ubuntu/faq_rag_v2/qa_db_merged.json
+TFIDF_VOCAB_PATH_V2=/home/ubuntu/faq_rag_v2/tfidf_vocab.json
 
-# Local LLM endpoint used by app.py
 LOCAL_LLM_URL=https://localgpu2.myapidev.ru/v1/chat/qwen
 LOCAL_LLM_API_KEY=PUT_REAL_KEY_HERE
 LLM_MAX_TOKENS_V2=1200
-
-# FastAPI protection key (X-API-Key header)
 RAG_API_KEY=PUT_REAL_KEY_HERE
 ```
 
 ---
 
-## 5) Run v2 service on another port (example: 8010)
+## 6) Run v2 API on port 8010
 
 ```bash
-cd /home/ubuntu/rag_ord_2_v2
+cd /home/ubuntu/faq_rag_v2
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 set -a
 source ./faq_rag_v2.env
 set +a
-
-# run in parallel to old service
-nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/rag_ord_2_v2/uvicorn_v2.log 2>&1 &
+nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/faq_rag_v2/uvicorn_v2.log 2>&1 &
 ```
 
-Quick check:
+Check:
 
 ```bash
-curl -sS http://127.0.0.1:8010/docs >/dev/null && echo "v2 up"
-tail -n 50 /home/ubuntu/rag_ord_2_v2/uvicorn_v2.log
+curl -sS http://127.0.0.1:8010/health
+tail -n 80 /home/ubuntu/faq_rag_v2/uvicorn_v2.log
 ```
 
 ---
 
-## 6) nginx: route only v2 endpoints to v2 backend
+## 7) nginx routing for v2
 
-Open your nginx site config (example: `/etc/nginx/sites-available/default`) and add locations:
+Используйте **активный** site-файл nginx.
+
+Если v1 уже в `/etc/nginx/sites-available/response-v1.myapidev.ru`,
+создайте отдельный файл для v2: `/etc/nginx/sites-available/response-v2.myapidev.ru`.
+
+Добавьте v2 locations:
 
 ```nginx
-# New v2 endpoints -> v2 backend (port 8010)
 location /answer_v2 {
     proxy_pass http://127.0.0.1:8010;
     proxy_set_header Host $host;
@@ -125,44 +155,44 @@ location /answer_full_v2 {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
 }
-
-# Keep existing routes for v1 as they are now:
-# /answer and /answer_full -> old backend
 ```
 
-Validate + reload:
+Enable and reload:
 
 ```bash
+sudo ln -sf /etc/nginx/sites-available/response-v2.myapidev.ru /etc/nginx/sites-enabled/response-v2.myapidev.ru
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
 ---
 
-## 7) Smoke test through nginx
+## 8) Smoke test
 
 ```bash
-curl -sS -X POST http://<DOMAIN_OR_IP>/answer_v2 \
+curl -sS -X POST http://127.0.0.1:8010/answer_full_v2 \
   -H 'Content-Type: application/json' \
-  -d '{"question":"Как вернуть товар?"}'
+  -H 'X-API-Key: PUT_REAL_KEY_HERE' \
+  -d '{"question":"смайлики?","debug":true}'
+```
 
-curl -sS -X POST http://<DOMAIN_OR_IP>/answer_full_v2 \
+and through domain:
+
+```bash
+curl -sS -X POST https://response-v2.myapidev.ru/answer_full_v2 \
   -H 'Content-Type: application/json' \
-  -d '{"question":"Как вернуть товар?"}'
+  -H 'X-API-Key: PUT_REAL_KEY_HERE' \
+  -d '{"question":"смайлики?","debug":true}'
 ```
 
 ---
 
-## 8) Rollback (instant)
-
-If anything goes wrong with v2:
-
-1. Comment out/remove nginx locations `/answer_v2` and `/answer_full_v2`.
-2. `sudo nginx -t && sudo systemctl reload nginx`
-3. Stop v2 process:
+## 9) Rollback v2 only
 
 ```bash
-pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010"
+pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010" || true
+sudo docker stop qdrant || true
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-v1 continues working unchanged.
+v1 остаётся без изменений.
