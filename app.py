@@ -500,7 +500,11 @@ def answer_question_with_rag_v2(question: str):
     if exact_answer is not None:
         return exact_answer.text, [exact_answer.id], []
 
-    candidates = retrieve_answers(question, top_k=5)
+    try:
+        candidates = retrieve_answers(question, top_k=5)
+    except Exception:
+        # Не роняем v2 endpoint 500 при недоступном Qdrant/сети.
+        return NO_ANSWER_TEXT, None, []
 
     if not candidates:
         return NO_ANSWER_TEXT, None, candidates
@@ -728,7 +732,11 @@ def call_llm(system_prompt: str, user_prompt: str) -> str:
 
 
 def answer_question_with_rag(question: str):
-    candidates = retrieve_answers_v1(question, top_k=5)
+    try:
+        candidates = retrieve_answers_v1(question, top_k=5)
+    except Exception:
+        # Не роняем legacy endpoint 500 при недоступном Qdrant/сети.
+        return NO_ANSWER_TEXT, None, []
 
     if not candidates or candidates[0].score_final < SCORE_THRESHOLD_V1:
         system_prompt = (
