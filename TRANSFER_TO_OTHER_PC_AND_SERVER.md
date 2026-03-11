@@ -72,6 +72,7 @@ TFIDF_VOCAB_PATH_V2=/home/ubuntu/rag_ord_2_v2/tfidf_vocab.json
 # Local LLM endpoint used by app.py
 LOCAL_LLM_URL=https://localgpu2.myapidev.ru/v1/chat/qwen
 LOCAL_LLM_API_KEY=PUT_REAL_KEY_HERE
+LLM_MAX_TOKENS_V2=1200
 
 # FastAPI protection key (X-API-Key header)
 RAG_API_KEY=PUT_REAL_KEY_HERE

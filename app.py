@@ -41,6 +41,7 @@ LOCAL_LLM_URL = os.getenv("LOCAL_LLM_URL", "")
 LOCAL_LLM_API_KEY = os.getenv("LOCAL_LLM_API_KEY", "")
   # API-ключ для доступа к самому RAG-API
 RAG_API_KEY = os.getenv("RAG_API_KEY", "")
+LLM_MAX_TOKENS_V2 = int(os.getenv("LLM_MAX_TOKENS_V2", "1200"))
 
 
 # ---------- Глобальное состояние ----------
@@ -374,7 +375,7 @@ def build_context_fragments(candidates: List[RetrievedAnswer]) -> str:
         if ans.categories:
             parts.append(f"Категории: {', '.join(ans.categories)}")
         if ans.question_variants:
-            qs = ", ".join(ans.question_variants[:5])
+            qs = ", ".join(ans.question_variants)
             parts.append(f"Варианты вопросов: {qs}")
         parts.append("Ответ:")
         parts.append(ans.text)
@@ -392,7 +393,7 @@ def call_llm_v2(system_prompt: str, user_prompt: str) -> str:
       body: {
         "disable_reasoning": true,
         "messages": [{"role": "user", "content": "<full_prompt>"}],
-        "max_tokens": 640
+        "max_tokens": LLM_MAX_TOKENS_V2
       }
 
     Ожидаем ответ: {"content": "..."}
@@ -411,7 +412,7 @@ def call_llm_v2(system_prompt: str, user_prompt: str) -> str:
         "messages": [
             {"role": "user", "content": full_prompt}
         ],
-        "max_tokens": 640,
+        "max_tokens": LLM_MAX_TOKENS_V2,
         "temperature": 0,
         "top_p": 1,
     }
