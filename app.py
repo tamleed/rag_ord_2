@@ -239,6 +239,16 @@ def _is_confident_top_candidate(candidates: List[RetrievedAnswer]) -> bool:
     return (candidates[0].score_final - candidates[1].score_final) >= TOP1_GAP_THRESHOLD
 
 
+def _best_variant_overlap(question: str, candidate: RetrievedAnswer) -> float:
+    """
+    Максимальное лексическое пересечение вопроса пользователя
+    с вариантами вопросов в карточке ответа.
+    """
+    if not candidate.answer.question_variants:
+        return 0.0
+    return max((_token_overlap_score(question, v) for v in candidate.answer.question_variants), default=0.0)
+
+
 # ---------- Retriever (hybrid dense + sparse) ----------
 
 
@@ -496,21 +506,18 @@ def answer_question_with_rag_v2(question: str):
 
     top = candidates[0]
 
-    if not _candidate_has_query_coverage(question, top):
+    covered_candidates = [c for c in candidates if _candidate_has_query_coverage(question, c)]
+
+    # "Ответ не найден" — только для явно нерелевантных запросов.
+    # Используем комбинацию слабого retriever-score и низкого лексического overlap.
+    top_overlap = _best_variant_overlap(question, top)
+    if not covered_candidates and (top.score_final < SCORE_THRESHOLD or top_overlap < 0.2):
         return NO_ANSWER_TEXT, None, candidates
 
-    if _should_return_two_answers(candidates):
-        second = candidates[1]
-        if _candidate_has_query_coverage(question, second):
-            answer_text = _format_two_answers(top, second)
-            answer_ids = [top.answer.id, second.answer.id]
-            return answer_text, answer_ids, candidates
-
-    if not _is_confident_top_candidate(candidates):
-        return NO_ANSWER_TEXT, None, candidates
+    rag_candidates = covered_candidates[:3] if covered_candidates else candidates[:3]
 
     # Для неточного совпадения используем RAG+LLM по релевантным фрагментам.
-    context_text = build_context_fragments(candidates[:3])
+    context_text = build_context_fragments(rag_candidates)
 
     system_prompt = (
         "Ты — ассистент по вопросам ОРД-А, ЕРИР и интернет-рекламы. "
@@ -540,14 +547,12 @@ def answer_question_with_rag_v2(question: str):
 
 def answer_question_logic_v2(question: str):
     """
-    1) Классический режим: ищем ТОЛЬКО по вопросам (questions[].text).
-       - сначала RAW-совпадение;
-       - затем нормализованное.
-       Если нашли — отдаём готовый Answer.text.
-    2) Если нет — запускаем RAG (dense + sparse + локальная LLM).
+    1) Только 100% RAW-совпадение с вопросом из БЗ
+       отдаем как готовый FAQ-ответ (без модели).
+    2) Во всех остальных случаях используем RAG (retrieval + LLM).
+    3) "Ответ не найден" возвращаем только для явно нерелевантных запросов.
     """
     raw_q = question.strip()
-    norm_q = normalize(question)
 
     # 1) 100% совпадение (raw): ответ строго из БЗ, без retrieval/LLM.
     exact_raw_answer = _match_exact_raw_question(question)
@@ -563,36 +568,7 @@ def answer_question_logic_v2(question: str):
             },
         }
 
-    # 2) Неточный этап: нормализованный матч, далее лексика/RAG.
-    norm_answer = _match_normalized_question(question)
-    if norm_answer is not None:
-        return {
-            "answer": norm_answer.text,
-            "answer_source": "faq_exact",
-            "answer_id": norm_answer.id,
-            "debug": {
-                "matched_question_raw": None,
-                "matched_question_norm": norm_q,
-                "matched_answer_id": norm_answer.id,
-            },
-        }
-
-    # 3. Лексический FAQ-матч для переформулированных "точных" вопросов
-    best_faq_id = find_best_faq_match(question)
-    if best_faq_id is not None:
-        ans = ANSWERS_BY_ID_V2[best_faq_id]
-        return {
-            "answer": ans.text,
-            "answer_source": "faq_exact",
-            "answer_id": ans.id,
-            "debug": {
-                "matched_question_raw": None,
-                "matched_question_norm": None,
-                "matched_answer_id": ans.id,
-            },
-        }
-
-    # 4. RAG
+    # 2) RAG
     rag_answer, rag_answer_ids, candidates = answer_question_with_rag_v2(question)
 
     debug_candidates = [
