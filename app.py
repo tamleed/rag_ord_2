@@ -375,7 +375,7 @@ def build_context_fragments(candidates: List[RetrievedAnswer]) -> str:
         if ans.categories:
             parts.append(f"Категории: {', '.join(ans.categories)}")
         if ans.question_variants:
-            qs = ", ".join(ans.question_variants)
+            qs = ", ".join(ans.question_variants[:5])
             parts.append(f"Варианты вопросов: {qs}")
         parts.append("Ответ:")
         parts.append(ans.text)
@@ -515,10 +515,11 @@ def answer_question_with_rag_v2(question: str):
     if not covered_candidates and (top.score_final < SCORE_THRESHOLD or top_overlap < 0.2):
         return NO_ANSWER_TEXT, None, candidates
 
-    rag_candidates = covered_candidates[:3] if covered_candidates else candidates[:3]
+    selected_candidate = covered_candidates[0] if covered_candidates else top
 
-    # Для неточного совпадения используем RAG+LLM по релевантным фрагментам.
-    context_text = build_context_fragments(rag_candidates)
+    # Для неточного совпадения используем RAG+LLM по одному лучшему выбранному ответу.
+    # Передаем полный текст ответа (ans.text без обрезки) и ограниченный список вариантов вопросов.
+    context_text = build_context_fragments([selected_candidate])
 
     system_prompt = (
         "Ты — ассистент по вопросам ОРД-А, ЕРИР и интернет-рекламы. "
@@ -539,9 +540,9 @@ def answer_question_with_rag_v2(question: str):
     answer_text = call_llm_v2(system_prompt, user_prompt)
     if not answer_text or answer_text.startswith("Ошибка"):
         # Fallback: если LLM недоступна, всё равно отдаем детерминированный ответ из БЗ.
-        return top.answer.text, [top.answer.id], candidates
+        return selected_candidate.answer.text, [selected_candidate.answer.id], candidates
 
-    return answer_text, [top.answer.id], candidates
+    return answer_text, [selected_candidate.answer.id], candidates
 
 
 # ---------- Итоговая логика: FAQ-словарь + RAG ----------
