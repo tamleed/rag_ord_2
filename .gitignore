@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+tests/__pycache__/
+.pytest_cache/
+artifacts/
+*.pyc
+*.env
+faq_rag.env
+env.sh
