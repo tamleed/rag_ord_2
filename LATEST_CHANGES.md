@@ -13,6 +13,44 @@ git show --name-only --format=fuller HEAD
 - commit: `8713c54`
 - title: `Improve v2 retrieval/answering logic, add raw scoring & multi-answer handling; update deployment checklist and tests`
 
+## Что делать сейчас
+
+### Если вам нужно просто понять, где были последние правки
+
+```bash
+./show_latest_changes.sh
+git diff HEAD~1 HEAD -- app.py tests/test_app_logic.py TRANSFER_TO_OTHER_PC_AND_SERVER.md qa_db_merged.json
+```
+
+### Если вы хотите проверить логику локально
+
+```bash
+pytest -q tests/test_app_logic.py
+python -m py_compile app.py rag_core.py tests/test_app_logic.py
+```
+
+### Если ваша задача — выкатить обновлённую v2 на сервер
+
+```bash
+cd /home/ubuntu/faq_rag_v2
+git checkout codex/update-project-based-on-tester-feedback
+git pull --ff-only origin codex/update-project-based-on-tester-feedback
+source .venv/bin/activate
+set -a
+source ./faq_rag_v2.env
+set +a
+python index_faq.py
+nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/faq_rag_v2/uvicorn_v2.log 2>&1 &
+curl -sS http://127.0.0.1:8010/health
+```
+
+### Если нужно быстро понять, что именно изменилось по смыслу
+
+- `app.py` — вся новая логика retrieval / no-answer / multi-answer.
+- `tests/test_app_logic.py` — что именно ожидалось от этой логики.
+- `qa_db_merged.json` — изменения в самих FAQ-данных.
+- `TRANSFER_TO_OTHER_PC_AND_SERVER.md` — что делать при деплое.
+
 ## Какие файлы были изменены
 
 ### 1. `app.py`
