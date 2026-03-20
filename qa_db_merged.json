@@ -4736,7 +4736,7 @@
       {
         "id": 274,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "erid?",
         "created_at": "2025-11-01T14:26:21.000000Z",
         "updated_at": "2025-11-01T14:27:05.000000Z",
@@ -4747,7 +4747,7 @@
       {
         "id": 275,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "идентификатор?",
         "created_at": "2025-11-01T14:26:29.000000Z",
         "updated_at": "2025-11-01T14:26:29.000000Z",
@@ -4758,7 +4758,7 @@
       {
         "id": 278,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "кобрендинг?",
         "created_at": "2025-11-01T14:26:50.000000Z",
         "updated_at": "2025-11-01T14:26:50.000000Z",
@@ -4769,7 +4769,7 @@
       {
         "id": 272,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "креатив?",
         "created_at": "2025-11-01T14:26:07.000000Z",
         "updated_at": "2025-11-01T14:26:07.000000Z",
@@ -4780,7 +4780,7 @@
       {
         "id": 276,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "крео?",
         "created_at": "2025-11-01T14:26:36.000000Z",
         "updated_at": "2025-11-01T14:26:36.000000Z",
@@ -4791,7 +4791,7 @@
       {
         "id": 280,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "маркировка?",
         "created_at": "2025-11-01T14:27:03.000000Z",
         "updated_at": "2025-11-01T14:27:03.000000Z",
@@ -4802,7 +4802,7 @@
       {
         "id": 277,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "самореклама?",
         "created_at": "2025-11-01T14:26:42.000000Z",
         "updated_at": "2025-11-01T14:26:42.000000Z",
@@ -4813,7 +4813,7 @@
       {
         "id": 279,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "социальная?",
         "created_at": "2025-11-01T14:26:57.000000Z",
         "updated_at": "2025-11-01T14:26:57.000000Z",
@@ -4824,7 +4824,7 @@
       {
         "id": 273,
         "answer_id": 131,
-        "is_active": true,
+        "is_active": false,
         "text": "токен?",
         "created_at": "2025-11-01T14:26:14.000000Z",
         "updated_at": "2025-11-01T14:26:14.000000Z",
@@ -4849,7 +4849,7 @@
       {
         "id": 291,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "агенство?",
         "created_at": "2025-11-01T14:34:47.000000Z",
         "updated_at": "2025-11-01T14:34:47.000000Z",
@@ -4860,7 +4860,7 @@
       {
         "id": 285,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "индивидуальный предприниматель?",
         "created_at": "2025-11-01T14:34:09.000000Z",
         "updated_at": "2025-11-01T14:34:09.000000Z",
@@ -4871,7 +4871,7 @@
       {
         "id": 282,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "иностранный?",
         "created_at": "2025-11-01T14:33:37.000000Z",
         "updated_at": "2025-11-01T14:33:37.000000Z",
@@ -4882,7 +4882,7 @@
       {
         "id": 287,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "ИП?",
         "created_at": "2025-11-01T14:34:22.000000Z",
         "updated_at": "2025-11-01T14:34:22.000000Z",
@@ -4893,7 +4893,7 @@
       {
         "id": 281,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "контрагент?",
         "created_at": "2025-11-01T14:33:29.000000Z",
         "updated_at": "2025-11-01T14:33:29.000000Z",
@@ -4904,7 +4904,7 @@
       {
         "id": 295,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "оператор рекламных систем?",
         "created_at": "2025-11-01T14:35:44.000000Z",
         "updated_at": "2025-11-01T14:35:44.000000Z",
@@ -4915,7 +4915,7 @@
       {
         "id": 290,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "организация?",
         "created_at": "2025-11-01T14:34:41.000000Z",
         "updated_at": "2025-11-01T14:34:41.000000Z",
@@ -4926,7 +4926,7 @@
       {
         "id": 299,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "ОРС?",
         "created_at": "2025-11-01T14:36:05.000000Z",
         "updated_at": "2025-11-01T14:36:05.000000Z",
@@ -4937,7 +4937,7 @@
       {
         "id": 297,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "РА?",
         "created_at": "2025-11-01T14:35:55.000000Z",
         "updated_at": "2025-11-01T14:35:55.000000Z",
@@ -4948,7 +4948,7 @@
       {
         "id": 298,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "РД?",
         "created_at": "2025-11-01T14:36:00.000000Z",
         "updated_at": "2025-11-01T14:36:00.000000Z",
@@ -4959,7 +4959,7 @@
       {
         "id": 293,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "рекламное агенство?",
         "created_at": "2025-11-01T14:35:05.000000Z",
         "updated_at": "2025-11-01T14:35:05.000000Z",
@@ -4970,7 +4970,7 @@
       {
         "id": 292,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "рекламодатель?",
         "created_at": "2025-11-01T14:34:54.000000Z",
         "updated_at": "2025-11-01T14:34:54.000000Z",
@@ -4981,7 +4981,7 @@
       {
         "id": 294,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "рекламораспространитель?",
         "created_at": "2025-11-01T14:35:18.000000Z",
         "updated_at": "2025-11-01T14:35:18.000000Z",
@@ -4992,7 +4992,7 @@
       {
         "id": 296,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "РР?",
         "created_at": "2025-11-01T14:35:50.000000Z",
         "updated_at": "2025-11-01T14:35:50.000000Z",
@@ -5003,7 +5003,7 @@
       {
         "id": 283,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "физическое лицо?",
         "created_at": "2025-11-01T14:33:47.000000Z",
         "updated_at": "2025-11-01T14:33:47.000000Z",
@@ -5014,7 +5014,7 @@
       {
         "id": 289,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "физлицо?",
         "created_at": "2025-11-01T14:34:33.000000Z",
         "updated_at": "2025-11-01T14:34:33.000000Z",
@@ -5025,7 +5025,7 @@
       {
         "id": 288,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "ФЛ?",
         "created_at": "2025-11-01T14:34:27.000000Z",
         "updated_at": "2025-11-01T14:34:27.000000Z",
@@ -5036,7 +5036,7 @@
       {
         "id": 286,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "ЮЛ?",
         "created_at": "2025-11-01T14:34:16.000000Z",
         "updated_at": "2025-11-01T14:34:16.000000Z",
@@ -5047,7 +5047,7 @@
       {
         "id": 284,
         "answer_id": 132,
-        "is_active": true,
+        "is_active": false,
         "text": "юридическое лицо?",
         "created_at": "2025-11-01T14:33:55.000000Z",
         "updated_at": "2025-11-01T14:33:55.000000Z",
@@ -5072,7 +5072,7 @@
       {
         "id": 305,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "вк?",
         "created_at": "2025-11-01T14:37:15.000000Z",
         "updated_at": "2025-11-01T14:37:15.000000Z",
@@ -5083,7 +5083,7 @@
       {
         "id": 304,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "вконтакте?",
         "created_at": "2025-11-01T14:37:10.000000Z",
         "updated_at": "2025-11-01T14:37:10.000000Z",
@@ -5094,7 +5094,7 @@
       {
         "id": 302,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "канал?",
         "created_at": "2025-11-01T14:36:58.000000Z",
         "updated_at": "2025-11-01T14:36:58.000000Z",
@@ -5105,7 +5105,7 @@
       {
         "id": 300,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "площадка?",
         "created_at": "2025-11-01T14:36:46.000000Z",
         "updated_at": "2025-11-01T14:36:46.000000Z",
@@ -5116,7 +5116,7 @@
       {
         "id": 307,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "сайт?",
         "created_at": "2025-11-01T14:37:26.000000Z",
         "updated_at": "2025-11-01T14:37:26.000000Z",
@@ -5127,7 +5127,7 @@
       {
         "id": 308,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "смарт?",
         "created_at": "2025-11-01T14:37:31.000000Z",
         "updated_at": "2025-11-01T14:37:31.000000Z",
@@ -5138,7 +5138,7 @@
       {
         "id": 301,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "соцсеть?",
         "created_at": "2025-11-01T14:36:52.000000Z",
         "updated_at": "2025-11-01T14:36:52.000000Z",
@@ -5149,7 +5149,7 @@
       {
         "id": 309,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "ссылка?",
         "created_at": "2025-11-01T14:37:37.000000Z",
         "updated_at": "2025-11-01T14:37:37.000000Z",
@@ -5160,7 +5160,7 @@
       {
         "id": 303,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "телеграм?",
         "created_at": "2025-11-01T14:37:03.000000Z",
         "updated_at": "2025-11-01T14:37:03.000000Z",
@@ -5171,7 +5171,7 @@
       {
         "id": 306,
         "answer_id": 133,
-        "is_active": true,
+        "is_active": false,
         "text": "ютуб?",
         "created_at": "2025-11-01T14:37:21.000000Z",
         "updated_at": "2025-11-01T14:37:21.000000Z",
@@ -5195,7 +5195,7 @@
       {
         "id": 314,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "CPA?",
         "created_at": "2025-11-01T14:38:55.000000Z",
         "updated_at": "2025-11-01T14:38:55.000000Z",
@@ -5206,7 +5206,7 @@
       {
         "id": 316,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "CPC?",
         "created_at": "2025-11-01T14:39:07.000000Z",
         "updated_at": "2025-11-01T14:39:07.000000Z",
@@ -5217,7 +5217,7 @@
       {
         "id": 315,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "CPM?",
         "created_at": "2025-11-01T14:39:02.000000Z",
         "updated_at": "2025-11-01T14:39:02.000000Z",
@@ -5228,7 +5228,7 @@
       {
         "id": 318,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "вечная?",
         "created_at": "2025-11-01T14:39:19.000000Z",
         "updated_at": "2025-11-01T14:39:19.000000Z",
@@ -5239,7 +5239,7 @@
       {
         "id": 317,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "клики?",
         "created_at": "2025-11-01T14:39:13.000000Z",
         "updated_at": "2025-11-01T14:39:13.000000Z",
@@ -5250,7 +5250,7 @@
       {
         "id": 311,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "отчетность?",
         "created_at": "2025-11-01T14:38:32.000000Z",
         "updated_at": "2025-11-01T14:38:32.000000Z",
@@ -5261,7 +5261,7 @@
       {
         "id": 312,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "показы?",
         "created_at": "2025-11-01T14:38:38.000000Z",
         "updated_at": "2025-11-01T14:38:38.000000Z",
@@ -5272,7 +5272,7 @@
       {
         "id": 310,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "статистика?",
         "created_at": "2025-11-01T14:38:26.000000Z",
         "updated_at": "2025-11-01T14:38:26.000000Z",
@@ -5283,7 +5283,7 @@
       {
         "id": 313,
         "answer_id": 134,
-        "is_active": true,
+        "is_active": false,
         "text": "стоимость за единицу?",
         "created_at": "2025-11-01T14:38:47.000000Z",
         "updated_at": "2025-11-01T14:38:47.000000Z",
@@ -5306,7 +5306,7 @@
       {
         "id": 319,
         "answer_id": 135,
-        "is_active": true,
+        "is_active": false,
         "text": "нужно маркировать?",
         "created_at": "2025-11-01T14:39:59.000000Z",
         "updated_at": "2025-11-01T14:39:59.000000Z",
@@ -5317,7 +5317,7 @@
       {
         "id": 320,
         "answer_id": 135,
-        "is_active": true,
+        "is_active": false,
         "text": "считается рекламой?",
         "created_at": "2025-11-01T14:40:06.000000Z",
         "updated_at": "2025-11-01T14:40:06.000000Z",
@@ -5328,7 +5328,7 @@
       {
         "id": 321,
         "answer_id": 135,
-        "is_active": true,
+        "is_active": false,
         "text": "является рекламой?",
         "created_at": "2025-11-01T14:40:13.000000Z",
         "updated_at": "2025-11-01T14:40:13.000000Z",
@@ -5351,7 +5351,7 @@
       {
         "id": 324,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "3%?",
         "created_at": "2025-11-01T14:40:55.000000Z",
         "updated_at": "2025-11-01T14:40:55.000000Z",
@@ -5362,7 +5362,7 @@
       {
         "id": 327,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "декларация?",
         "created_at": "2025-11-01T14:41:16.000000Z",
         "updated_at": "2025-11-01T14:41:16.000000Z",
@@ -5373,7 +5373,7 @@
       {
         "id": 328,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "квартальный доход?",
         "created_at": "2025-11-01T14:41:25.000000Z",
         "updated_at": "2025-11-01T14:41:25.000000Z",
@@ -5384,7 +5384,7 @@
       {
         "id": 326,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "рекламный сбор?",
         "created_at": "2025-11-01T14:41:10.000000Z",
         "updated_at": "2025-11-01T14:41:10.000000Z",
@@ -5395,7 +5395,7 @@
       {
         "id": 323,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "сбор 3%?",
         "created_at": "2025-11-01T14:40:48.000000Z",
         "updated_at": "2025-11-01T14:40:48.000000Z",
@@ -5406,7 +5406,7 @@
       {
         "id": 322,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "сбор?",
         "created_at": "2025-11-01T14:40:40.000000Z",
         "updated_at": "2025-11-01T14:40:40.000000Z",
@@ -5417,7 +5417,7 @@
       {
         "id": 325,
         "answer_id": 136,
-        "is_active": true,
+        "is_active": false,
         "text": "три процента?",
         "created_at": "2025-11-01T14:41:02.000000Z",
         "updated_at": "2025-11-01T14:41:02.000000Z",
@@ -5441,7 +5441,7 @@
       {
         "id": 344,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "cid?",
         "created_at": "2025-11-01T14:43:56.000000Z",
         "updated_at": "2025-11-01T14:43:56.000000Z",
@@ -5452,7 +5452,7 @@
       {
         "id": 338,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "агентский договор?",
         "created_at": "2025-11-01T14:43:05.000000Z",
         "updated_at": "2025-11-01T14:43:05.000000Z",
@@ -5463,7 +5463,7 @@
       {
         "id": 336,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "внешний договор?",
         "created_at": "2025-11-01T14:42:45.000000Z",
         "updated_at": "2025-11-01T14:42:45.000000Z",
@@ -5474,7 +5474,7 @@
       {
         "id": 329,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "договор?",
         "created_at": "2025-11-01T14:41:50.000000Z",
         "updated_at": "2025-11-01T14:41:50.000000Z",
@@ -5485,7 +5485,7 @@
       {
         "id": 334,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "допник?",
         "created_at": "2025-11-01T14:42:29.000000Z",
         "updated_at": "2025-11-01T14:42:29.000000Z",
@@ -5496,7 +5496,7 @@
       {
         "id": 330,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "дополнительное соглашение?",
         "created_at": "2025-11-01T14:42:00.000000Z",
         "updated_at": "2025-11-01T14:42:00.000000Z",
@@ -5507,7 +5507,7 @@
       {
         "id": 332,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "ДС?",
         "created_at": "2025-11-01T14:42:11.000000Z",
         "updated_at": "2025-11-01T14:42:11.000000Z",
@@ -5518,7 +5518,7 @@
       {
         "id": 342,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "заказчик?",
         "created_at": "2025-11-01T14:43:37.000000Z",
         "updated_at": "2025-11-01T14:43:37.000000Z",
@@ -5529,7 +5529,7 @@
       {
         "id": 331,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "ИД?",
         "created_at": "2025-11-01T14:42:06.000000Z",
         "updated_at": "2025-11-01T14:42:06.000000Z",
@@ -5540,7 +5540,7 @@
       {
         "id": 335,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "изначальный договор?",
         "created_at": "2025-11-01T14:42:38.000000Z",
         "updated_at": "2025-11-01T14:42:38.000000Z",
@@ -5551,7 +5551,7 @@
       {
         "id": 333,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "изначальный?",
         "created_at": "2025-11-01T14:42:20.000000Z",
         "updated_at": "2025-11-01T14:42:20.000000Z",
@@ -5562,7 +5562,7 @@
       {
         "id": 343,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "исполнитель?",
         "created_at": "2025-11-01T14:43:44.000000Z",
         "updated_at": "2025-11-01T14:43:44.000000Z",
@@ -5573,7 +5573,7 @@
       {
         "id": 341,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "оказания услуг?",
         "created_at": "2025-11-01T14:43:30.000000Z",
         "updated_at": "2025-11-01T14:43:30.000000Z",
@@ -5584,7 +5584,7 @@
       {
         "id": 337,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "посреднический договор?",
         "created_at": "2025-11-01T14:42:56.000000Z",
         "updated_at": "2025-11-01T14:42:56.000000Z",
@@ -5595,7 +5595,7 @@
       {
         "id": 339,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "рамочный договор?",
         "created_at": "2025-11-01T14:43:18.000000Z",
         "updated_at": "2025-11-01T14:43:18.000000Z",
@@ -5606,7 +5606,7 @@
       {
         "id": 340,
         "answer_id": 137,
-        "is_active": true,
+        "is_active": false,
         "text": "рамочный?",
         "created_at": "2025-11-01T14:43:24.000000Z",
         "updated_at": "2025-11-01T14:43:24.000000Z",
@@ -5631,7 +5631,7 @@
       {
         "id": 346,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "акт?",
         "created_at": "2025-11-01T14:44:26.000000Z",
         "updated_at": "2025-11-01T14:44:26.000000Z",
@@ -5642,7 +5642,7 @@
       {
         "id": 350,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "закрывающий?",
         "created_at": "2025-11-01T14:44:54.000000Z",
         "updated_at": "2025-11-01T14:44:54.000000Z",
@@ -5653,7 +5653,7 @@
       {
         "id": 351,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "отчет агента?",
         "created_at": "2025-11-01T14:45:06.000000Z",
         "updated_at": "2025-11-01T14:45:06.000000Z",
@@ -5664,7 +5664,7 @@
       {
         "id": 347,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "отчет посредника?",
         "created_at": "2025-11-01T14:44:33.000000Z",
         "updated_at": "2025-11-01T14:44:33.000000Z",
@@ -5675,7 +5675,7 @@
       {
         "id": 349,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "пункт акта?",
         "created_at": "2025-11-01T14:44:47.000000Z",
         "updated_at": "2025-11-01T14:44:47.000000Z",
@@ -5686,7 +5686,7 @@
       {
         "id": 348,
         "answer_id": 138,
-        "is_active": true,
+        "is_active": false,
         "text": "разаллокация?",
         "created_at": "2025-11-01T14:44:43.000000Z",
         "updated_at": "2025-11-01T14:44:43.000000Z",
@@ -5710,7 +5710,7 @@
       {
         "id": 357,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "активация?",
         "created_at": "2025-11-01T14:45:56.000000Z",
         "updated_at": "2025-11-01T14:45:56.000000Z",
@@ -5721,7 +5721,7 @@
       {
         "id": 362,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "верификация?",
         "created_at": "2025-11-01T14:46:29.000000Z",
         "updated_at": "2025-11-01T14:46:29.000000Z",
@@ -5732,7 +5732,7 @@
       {
         "id": 359,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "демо доступ?",
         "created_at": "2025-11-01T14:46:08.000000Z",
         "updated_at": "2025-11-01T14:46:08.000000Z",
@@ -5743,7 +5743,7 @@
       {
         "id": 360,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "демо кабинет?",
         "created_at": "2025-11-01T14:46:16.000000Z",
         "updated_at": "2025-11-01T14:46:16.000000Z",
@@ -5754,7 +5754,7 @@
       {
         "id": 352,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "кабинет?",
         "created_at": "2025-11-01T14:45:30.000000Z",
         "updated_at": "2025-11-01T14:45:30.000000Z",
@@ -5765,7 +5765,7 @@
       {
         "id": 354,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "личный кабинет?",
         "created_at": "2025-11-01T14:45:41.000000Z",
         "updated_at": "2025-11-01T14:45:41.000000Z",
@@ -5776,7 +5776,7 @@
       {
         "id": 355,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "ЛК?",
         "created_at": "2025-11-01T14:45:45.000000Z",
         "updated_at": "2025-11-01T14:45:45.000000Z",
@@ -5787,7 +5787,7 @@
       {
         "id": 356,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "подключение?",
         "created_at": "2025-11-01T14:45:51.000000Z",
         "updated_at": "2025-11-01T14:45:51.000000Z",
@@ -5798,7 +5798,7 @@
       {
         "id": 353,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "регистрация?",
         "created_at": "2025-11-01T14:45:35.000000Z",
         "updated_at": "2025-11-01T14:45:35.000000Z",
@@ -5809,7 +5809,7 @@
       {
         "id": 361,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "тестовый кабинет?",
         "created_at": "2025-11-01T14:46:23.000000Z",
         "updated_at": "2025-11-01T14:46:23.000000Z",
@@ -5820,7 +5820,7 @@
       {
         "id": 358,
         "answer_id": 139,
-        "is_active": true,
+        "is_active": false,
         "text": "тестовый?",
         "created_at": "2025-11-01T14:46:02.000000Z",
         "updated_at": "2025-11-01T14:46:02.000000Z",
@@ -5845,7 +5845,7 @@
       {
         "id": 368,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "логин?",
         "created_at": "2025-11-01T14:47:43.000000Z",
         "updated_at": "2025-11-01T14:47:43.000000Z",
@@ -5856,7 +5856,7 @@
       {
         "id": 366,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "пароль?",
         "created_at": "2025-11-01T14:47:32.000000Z",
         "updated_at": "2025-11-01T14:47:32.000000Z",
@@ -5867,7 +5867,7 @@
       {
         "id": 371,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "партнерство?",
         "created_at": "2025-11-01T14:48:04.000000Z",
         "updated_at": "2025-11-01T14:48:04.000000Z",
@@ -5878,7 +5878,7 @@
       {
         "id": 364,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "персональная организация?",
         "created_at": "2025-11-01T14:47:22.000000Z",
         "updated_at": "2025-11-01T14:47:22.000000Z",
@@ -5889,7 +5889,7 @@
       {
         "id": 363,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "профиль?",
         "created_at": "2025-11-01T14:47:13.000000Z",
         "updated_at": "2025-11-01T14:47:13.000000Z",
@@ -5900,7 +5900,7 @@
       {
         "id": 373,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "реферальная программа?",
         "created_at": "2025-11-01T14:48:20.000000Z",
         "updated_at": "2025-11-01T14:48:20.000000Z",
@@ -5911,7 +5911,7 @@
       {
         "id": 367,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "сменить пароль?",
         "created_at": "2025-11-01T14:47:38.000000Z",
         "updated_at": "2025-11-01T14:47:38.000000Z",
@@ -5922,7 +5922,7 @@
       {
         "id": 365,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "сменить?",
         "created_at": "2025-11-01T14:47:27.000000Z",
         "updated_at": "2025-11-01T14:47:27.000000Z",
@@ -5933,7 +5933,7 @@
       {
         "id": 372,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "сотрудник?",
         "created_at": "2025-11-01T14:48:10.000000Z",
         "updated_at": "2025-11-01T14:48:10.000000Z",
@@ -5944,7 +5944,7 @@
       {
         "id": 369,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "статусы отправки?",
         "created_at": "2025-11-01T14:47:52.000000Z",
         "updated_at": "2025-11-01T14:47:52.000000Z",
@@ -5956,7 +5956,7 @@
       {
         "id": 370,
         "answer_id": 140,
-        "is_active": true,
+        "is_active": false,
         "text": "уведомления?",
         "created_at": "2025-11-01T14:47:57.000000Z",
         "updated_at": "2025-11-01T14:47:57.000000Z",
@@ -5979,7 +5979,7 @@
       {
         "id": 380,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "детализация?",
         "created_at": "2025-11-01T14:49:41.000000Z",
         "updated_at": "2025-11-01T14:49:41.000000Z",
@@ -5990,7 +5990,7 @@
       {
         "id": 374,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "оплата?",
         "created_at": "2025-11-01T14:49:09.000000Z",
         "updated_at": "2025-11-01T14:49:09.000000Z",
@@ -6001,7 +6001,7 @@
       {
         "id": 375,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "платить?",
         "created_at": "2025-11-01T14:49:14.000000Z",
         "updated_at": "2025-11-01T14:49:14.000000Z",
@@ -6012,7 +6012,7 @@
       {
         "id": 376,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "стоимость услуг?",
         "created_at": "2025-11-01T14:49:21.000000Z",
         "updated_at": "2025-11-01T14:49:21.000000Z",
@@ -6023,7 +6023,7 @@
       {
         "id": 378,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "счет?",
         "created_at": "2025-11-01T14:49:30.000000Z",
         "updated_at": "2025-11-01T14:49:30.000000Z",
@@ -6034,7 +6034,7 @@
       {
         "id": 377,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "тариф?",
         "created_at": "2025-11-01T14:49:25.000000Z",
         "updated_at": "2025-11-01T14:49:25.000000Z",
@@ -6045,7 +6045,7 @@
       {
         "id": 379,
         "answer_id": 141,
-        "is_active": true,
+        "is_active": false,
         "text": "ЭДО?",
         "created_at": "2025-11-01T14:49:35.000000Z",
         "updated_at": "2025-11-01T14:49:35.000000Z",
