@@ -32,6 +32,14 @@ printf '%s\n' \
   'export QDRANT_URL=http://localhost:6333 && export QA_DB_PATH=./qa_db_merged.json && export TFIDF_VOCAB_PATH=./tfidf_vocab.json' \
   'python index_faq.py && uvicorn app:app --host 127.0.0.1 --port 8010'
 
+printf '\n=== Git pull + restart v2 on server ===\n'
+printf '%s\n' \
+  'cd /home/ubuntu/faq_rag_v2' \
+  'git fetch --all --prune && git checkout codex/update-project-based-on-tester-feedback && git pull --ff-only origin codex/update-project-based-on-tester-feedback' \
+  'source .venv/bin/activate && set -a && source ./faq_rag_v2.env && set +a' \
+  'python index_faq.py && pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010" || true' \
+  'nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/faq_rag_v2/uvicorn_v2.log 2>&1 & sleep 3 && curl -sS http://127.0.0.1:8010/health'
+
 printf '\n=== Search hints ===\n'
 printf '%s\n' \
   "app.py: rg -n 'LOW_RELEVANCE|MULTI_ANSWER|score_dense_raw|_select_close_candidates|_confirm_no_answer_with_llm|answer_question_logic_v2' app.py" \

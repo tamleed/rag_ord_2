@@ -63,6 +63,32 @@ python index_faq.py
 uvicorn app:app --host 127.0.0.1 --port 8010
 ```
 
+## Команда, чтобы забрать код с git на сервер и перезапустить v2
+
+Если вы уже на сервере, используйте такой блок:
+
+```bash
+cd /home/ubuntu/faq_rag_v2
+git fetch --all --prune
+git checkout codex/update-project-based-on-tester-feedback
+git pull --ff-only origin codex/update-project-based-on-tester-feedback
+source .venv/bin/activate
+set -a
+source ./faq_rag_v2.env
+set +a
+python index_faq.py
+pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010" || true
+nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/faq_rag_v2/uvicorn_v2.log 2>&1 &
+sleep 3
+curl -sS http://127.0.0.1:8010/health
+```
+
+Если вы запускаете это со своей локальной машины одной командой через SSH, используйте такой вариант:
+
+```bash
+ssh ubuntu@<SERVER_IP> 'cd /home/ubuntu/faq_rag_v2 && git fetch --all --prune && git checkout codex/update-project-based-on-tester-feedback && git pull --ff-only origin codex/update-project-based-on-tester-feedback && source .venv/bin/activate && set -a && source ./faq_rag_v2.env && set +a && python index_faq.py && pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010" || true && nohup uvicorn app:app --host 127.0.0.1 --port 8010 > /home/ubuntu/faq_rag_v2/uvicorn_v2.log 2>&1 & sleep 3 && curl -sS http://127.0.0.1:8010/health'
+```
+
 ## Что делать сейчас
 
 ### Если вам нужно просто понять, где были последние правки
