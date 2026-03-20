@@ -37,6 +37,9 @@ SCORE_THRESHOLD_V1 = float(os.getenv("SCORE_THRESHOLD_V1", "0.2"))
 TOP1_GAP_THRESHOLD = 0.08  # минимальный отрыв top-1 от top-2
 MULTI_ANSWER_GAP_THRESHOLD = 0.03  # насколько близки score top-1 и top-2
 MULTI_ANSWER_THIRD_GAP_THRESHOLD = 0.15  # насколько top-3 отстаёт от top-1
+MULTI_ANSWER_RELATIVE_RATIO = 0.7  # близкие кандидаты: не хуже 70% от score top-1
+MULTI_ANSWER_NEXT_FAR_RATIO = 0.5  # следующий кандидат считается далеким, если ниже 50% от score top-1
+MAX_MULTI_ANSWER_CANDIDATES = 4
 
 # локальная LLM
 LOCAL_LLM_URL = os.getenv("LOCAL_LLM_URL", "")
@@ -128,6 +131,13 @@ class RetrievedAnswer:
 NO_ANSWER_TEXT = (
     "В нашей базе знаний нет точного ответа на этот вопрос. "
     "Пожалуйста, уточните формулировку или обратитесь к специалисту ОРД."
+)
+MODEL_UNAVAILABLE_TEXT = (
+    "Не удалось подтвердить отсутствие точного ответа, потому что модель временно недоступна. "
+    "Пожалуйста, повторите запрос."
+)
+TOO_MANY_RELEVANT_ANSWERS_TEXT = (
+    "Количество релевантных ответов больше четырех, уточните, пожалуйста, вопрос."
 )
 
 RUS_STOPWORDS: Set[str] = {
@@ -470,39 +480,83 @@ def _match_normalized_question(question: str) -> Optional[Answer]:
         return None
     return ANSWERS_BY_ID_V2[direct_ids_norm[0]]
 
-def _should_return_two_answers(candidates: List[RetrievedAnswer]) -> bool:
+def _select_close_candidates(candidates: List[RetrievedAnswer]) -> List[RetrievedAnswer]:
     if len(candidates) < 2:
-        return False
+        return []
 
     top = candidates[0]
-    second = candidates[1]
+    if top.score_final < SCORE_THRESHOLD:
+        return []
 
-    if top.score_final < SCORE_THRESHOLD or second.score_final < SCORE_THRESHOLD:
-        return False
+    top_text_norm = normalize(top.answer.text)
+    min_close_score = top.score_final * MULTI_ANSWER_RELATIVE_RATIO
 
-    # 1) близкие top-1 и top-2
-    close_top2 = (top.score_final - second.score_final) <= (MULTI_ANSWER_GAP_THRESHOLD + 1e-9)
+    close_candidates: List[RetrievedAnswer] = []
+    for candidate in candidates:
+        if candidate.score_final < SCORE_THRESHOLD:
+            break
 
-    # 2) одинаковые тексты ответов в разных записях
-    same_text = normalize(top.answer.text) == normalize(second.answer.text)
+        same_text = normalize(candidate.answer.text) == top_text_norm
+        close_by_ratio = candidate.score_final >= (min_close_score - 1e-9)
+        close_by_gap = (top.score_final - candidate.score_final) <= (MULTI_ANSWER_GAP_THRESHOLD + 1e-9)
 
-    # 3) остальные кандидаты заметно хуже
-    if len(candidates) >= 3:
-        third = candidates[2]
-        third_far = (top.score_final - third.score_final) >= MULTI_ANSWER_THIRD_GAP_THRESHOLD
-    else:
-        third_far = True
+        if same_text or close_by_ratio or close_by_gap:
+            close_candidates.append(candidate)
+            continue
+        break
 
-    return (close_top2 or same_text) and third_far
+    if len(close_candidates) < 2:
+        return []
+
+    if len(close_candidates) > MAX_MULTI_ANSWER_CANDIDATES:
+        return close_candidates
+
+    next_idx = len(close_candidates)
+    if next_idx < len(candidates):
+        next_candidate = candidates[next_idx]
+        next_far_enough = next_candidate.score_final <= (
+            (top.score_final * MULTI_ANSWER_NEXT_FAR_RATIO) + 1e-9
+        )
+        if not next_far_enough:
+            return []
+
+    return close_candidates
 
 
-def _format_two_answers(first: RetrievedAnswer, second: RetrievedAnswer) -> str:
-    return (
-        "Возможны два релевантных варианта ответа по вашему запросу. "
+def _format_multiple_answers(candidates: List[RetrievedAnswer]) -> str:
+    intro = (
+        f"Возможны {len(candidates)} релевантных варианта ответа по вашему запросу. "
         "Пожалуйста, используйте тот, который точнее соответствует вашему контексту.\n\n"
-        f"Ответ 1:\n{first.answer.text}\n\n"
-        f"Ответ 2:\n{second.answer.text}"
     )
+    parts = [intro]
+    for idx, candidate in enumerate(candidates, start=1):
+        parts.append(f"Ответ {idx}:\n{candidate.answer.text}")
+        if idx != len(candidates):
+            parts.append("\n\n")
+    return "".join(parts)
+
+
+def _confirm_no_answer_with_llm(question: str) -> str:
+    system_prompt = (
+        "Ты проверяешь, можно ли безопасно вернуть пользователю сообщение об отсутствии точного ответа. "
+        "Если retriever не нашел релевантных фрагментов базы знаний, а точного ответа действительно нет, "
+        f"верни строго этот текст: {NO_ANSWER_TEXT} "
+        "Не добавляй ничего от себя."
+    )
+    user_prompt = (
+        f"Вопрос пользователя:\n{question}\n\n"
+        "Retriever не нашел достаточно релевантных фрагментов базы знаний или признал найденные фрагменты "
+        "нерелевантными. Подтверди, что безопасно вернуть стандартное сообщение об отсутствии точного ответа."
+    )
+
+    answer_text = call_llm_v2(system_prompt, user_prompt)
+    if not answer_text or answer_text.startswith("Ошибка"):
+        return MODEL_UNAVAILABLE_TEXT
+    return NO_ANSWER_TEXT
+
+
+def _return_no_answer(question: str, candidates: List[RetrievedAnswer]):
+    return _confirm_no_answer_with_llm(question), None, candidates
 
 
 def answer_question_with_rag_v2(question: str):
@@ -516,12 +570,14 @@ def answer_question_with_rag_v2(question: str):
         candidates = retrieve_answers(question, top_k=5)
     except Exception:
         # Не роняем v2 endpoint 500 при недоступном Qdrant/сети.
-        return NO_ANSWER_TEXT, None, []
+        return _return_no_answer(question, [])
 
     if not candidates:
-        return NO_ANSWER_TEXT, None, candidates
+        return _return_no_answer(question, candidates)
 
     top = candidates[0]
+    if top.score_final >= (1.0 - 1e-9):
+        return top.answer.text, [top.answer.id], candidates
 
     covered_candidates = [c for c in candidates if _candidate_has_query_coverage(question, c)]
 
@@ -533,12 +589,14 @@ def answer_question_with_rag_v2(question: str):
         and top.score_dense_raw < LOW_RELEVANCE_DENSE_THRESHOLD
         and top_overlap < LOW_RELEVANCE_OVERLAP_THRESHOLD
     ):
-        return NO_ANSWER_TEXT, None, candidates
+        return _return_no_answer(question, candidates)
 
     ranked_candidates = covered_candidates if covered_candidates else candidates
-    if _should_return_two_answers(ranked_candidates):
-        first, second = ranked_candidates[0], ranked_candidates[1]
-        return _format_two_answers(first, second), [first.answer.id, second.answer.id], candidates
+    close_candidates = _select_close_candidates(ranked_candidates)
+    if len(close_candidates) > MAX_MULTI_ANSWER_CANDIDATES:
+        return TOO_MANY_RELEVANT_ANSWERS_TEXT, None, candidates
+    if 2 <= len(close_candidates) <= MAX_MULTI_ANSWER_CANDIDATES:
+        return _format_multiple_answers(close_candidates), [c.answer.id for c in close_candidates], candidates
 
     selected_candidate = ranked_candidates[0]
 
@@ -612,7 +670,7 @@ def answer_question_logic_v2(question: str):
     ]
 
     source = "rag_llm"
-    if not rag_answer_ids:
+    if not rag_answer_ids and rag_answer == NO_ANSWER_TEXT:
         source = "no_answer"
 
     return {
