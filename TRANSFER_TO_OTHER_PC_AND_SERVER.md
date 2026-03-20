@@ -9,22 +9,23 @@
 
 ## 0) Verify branch on PC
 
-> Подтвержденная default branch на сервере: `My_ish_files_from_server`.
+> Актуальная рабочая ветка для обновлённой v2: `codex/update-project-based-on-tester-feedback`.
 > Перед деплоем всё равно проверьте `git branch -a` и `git remote show origin`.
 
 ```bash
 git fetch --all --prune
 git branch -a
+git branch -r
 git remote show origin
 git status -sb
 git log --oneline -n 5
 ```
 
-Если `origin/HEAD` указывает на `My_ish_files_from_server`, используйте:
+Если remote доступен, для обновлённой v2 используйте только:
 
 ```bash
-git checkout -B My_ish_files_from_server origin/My_ish_files_from_server
-git pull --ff-only
+git checkout codex/update-project-based-on-tester-feedback
+git pull --ff-only origin codex/update-project-based-on-tester-feedback
 ```
 
 ---
@@ -36,9 +37,10 @@ git pull --ff-only
 ```bash
 ssh ubuntu@<SERVER_IP>
 cd /home/ubuntu
-git clone --branch My_ish_files_from_server <GIT_REMOTE_URL> faq_rag_v2_new
+git clone --branch codex/update-project-based-on-tester-feedback <GIT_REMOTE_URL> faq_rag_v2_new
 cd faq_rag_v2_new
 git branch -a
+git branch -r
 git remote show origin
 git status -sb
 git log --oneline -n 5
@@ -48,13 +50,15 @@ git log --oneline -n 5
 
 ```bash
 cd /home/ubuntu/faq_rag_v2_new
-git fetch --all --prune
+git fetch origin
 git branch -a
+git branch -r
 git remote show origin
 git status -sb
 git log --oneline -n 5
-git checkout -B My_ish_files_from_server origin/My_ish_files_from_server
-git pull --ff-only
+git checkout codex/update-project-based-on-tester-feedback
+git reset --hard origin/codex/update-project-based-on-tester-feedback
+git clean -fd
 ```
 
 > Если git-remote недоступен, используйте сценарий ниже через zip-архив.
