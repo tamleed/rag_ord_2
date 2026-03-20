@@ -582,7 +582,10 @@ def answer_question_with_rag_v2(question: str):
     covered_candidates = [c for c in candidates if _candidate_has_query_coverage(question, c)]
 
     # "Ответ не найден" — только для явно нерелевантных запросов.
-    # Используем только абсолютные низкие сигналы: слабый dense cosine + слабый overlap.
+    # Запрос считаем нерелевантным, если одновременно:
+    # 1) не нашлось ни одного кандидата с покрытием ключевых токенов вопроса;
+    # 2) raw dense cosine у top-кандидата ниже LOW_RELEVANCE_DENSE_THRESHOLD;
+    # 3) лексическое пересечение с вариантами вопроса ниже LOW_RELEVANCE_OVERLAP_THRESHOLD.
     top_overlap = _best_variant_overlap(question, top)
     if (
         not covered_candidates
@@ -661,6 +664,9 @@ def answer_question_logic_v2(question: str):
             "answer_id": c.answer.id,
             "score_dense": c.score_dense,
             "score_sparse": c.score_sparse,
+            "score_dense_normalized": c.score_dense,
+            "score_sparse_normalized": c.score_sparse,
+            "score_final_normalized": c.score_final,
             "score_dense_raw": c.score_dense_raw,
             "score_sparse_raw": c.score_sparse_raw,
             "score_final": c.score_final,
@@ -899,6 +905,9 @@ def answer_question_logic(question: str):
             "answer_id": c.answer.id,
             "score_dense": c.score_dense,
             "score_sparse": c.score_sparse,
+            "score_dense_normalized": c.score_dense,
+            "score_sparse_normalized": c.score_sparse,
+            "score_final_normalized": c.score_final,
             "score_final": c.score_final,
             "categories": c.answer.categories,
         }

@@ -67,6 +67,32 @@ def test_high_relevance_non_exact_uses_rag_not_no_answer():
     assert answer_ids == [1]
 
 
+def test_debug_candidates_include_normalized_and_raw_scores():
+    candidate = make_candidate(
+        1,
+        "candidate answer",
+        score_final=0.83,
+        score_dense_raw=0.86,
+        score_dense=1.0,
+        score_sparse=0.6,
+        score_sparse_raw=0.55,
+    )
+
+    with (
+        patch.object(app, "_match_exact_raw_question", return_value=None),
+        patch.object(app, "answer_question_with_rag_v2", return_value=("llm answer", [1], [candidate])),
+    ):
+        result = app.answer_question_logic_v2("non exact question")
+
+    debug_candidate = result["debug_candidates"][0]
+    assert debug_candidate["score_dense"] == 1.0
+    assert debug_candidate["score_dense_normalized"] == 1.0
+    assert debug_candidate["score_dense_raw"] == 0.86
+    assert debug_candidate["score_sparse_normalized"] == 0.6
+    assert debug_candidate["score_sparse_raw"] == 0.55
+    assert debug_candidate["score_final_normalized"] == 0.83
+
+
 def test_score_final_one_reads_directly_from_base_candidate():
     first = make_candidate(1, "first answer", score_final=1.0, score_dense_raw=0.83)
     second = make_candidate(2, "second answer", score_final=1.0, score_dense_raw=0.83)
