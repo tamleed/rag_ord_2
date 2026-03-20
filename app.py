@@ -30,7 +30,9 @@ COLLECTION_NAME = "faq"
 QDRANT_EXACT_SEARCH = os.getenv("QDRANT_EXACT_SEARCH", "1") == "1"
 
 ALPHA_DENSE = 0.6          # вес dense-вектора
-SCORE_THRESHOLD = 0.2      # порог уверенности retriever'а
+SCORE_THRESHOLD = 0.2      # порог уверенности retriever'а для относительного hybrid-score
+LOW_RELEVANCE_DENSE_THRESHOLD = 0.2  # абсолютный порог cosine similarity для dense-совпадения
+LOW_RELEVANCE_OVERLAP_THRESHOLD = 0.2  # минимальное лексическое пересечение для осмысленного матча
 SCORE_THRESHOLD_V1 = float(os.getenv("SCORE_THRESHOLD_V1", "0.2"))
 TOP1_GAP_THRESHOLD = 0.08  # минимальный отрыв top-1 от top-2
 MULTI_ANSWER_GAP_THRESHOLD = 0.03  # насколько близки score top-1 и top-2
@@ -111,12 +113,16 @@ class RetrievedAnswer:
         score_sparse: float,
         score_final: float,
         payload: Dict,
+        score_dense_raw: float = 0.0,
+        score_sparse_raw: float = 0.0,
     ):
         self.answer = answer
         self.score_dense = score_dense
         self.score_sparse = score_sparse
         self.score_final = score_final
         self.payload = payload
+        self.score_dense_raw = score_dense_raw
+        self.score_sparse_raw = score_sparse_raw
 
 
 NO_ANSWER_TEXT = (
@@ -326,6 +332,8 @@ def retrieve_answers(
             return {k: 0.0 for k, v in scores.items()}
         return {k: v / mx for k, v in scores.items()}
 
+    # Важно: после такой нормализации лучший dense/sparse кандидат внутри текущей выборки
+    # получает score 1.0, поэтому 1.0 здесь означает "лучший в shortlist", а не "точное совпадение".
     dense_norm = normalize_scores(dense_scores)
     sparse_norm = normalize_scores(sparse_scores)
 
@@ -337,6 +345,8 @@ def retrieve_answers(
     for ans_id in all_ids:
         sd = dense_norm.get(ans_id, 0.0)
         ss = sparse_norm.get(ans_id, 0.0)
+        sd_raw = dense_scores.get(ans_id, 0.0)
+        ss_raw = sparse_scores.get(ans_id, 0.0)
         final = ALPHA_DENSE * sd + (1.0 - ALPHA_DENSE) * ss
 
         payload = src_points[ans_id].payload or {}
@@ -357,6 +367,8 @@ def retrieve_answers(
                 score_sparse=ss,
                 score_final=final,
                 payload=payload,
+                score_dense_raw=sd_raw,
+                score_sparse_raw=ss_raw,
             )
         )
 
@@ -469,7 +481,7 @@ def _should_return_two_answers(candidates: List[RetrievedAnswer]) -> bool:
         return False
 
     # 1) близкие top-1 и top-2
-    close_top2 = (top.score_final - second.score_final) <= MULTI_ANSWER_GAP_THRESHOLD
+    close_top2 = (top.score_final - second.score_final) <= (MULTI_ANSWER_GAP_THRESHOLD + 1e-9)
 
     # 2) одинаковые тексты ответов в разных записях
     same_text = normalize(top.answer.text) == normalize(second.answer.text)
@@ -487,7 +499,7 @@ def _should_return_two_answers(candidates: List[RetrievedAnswer]) -> bool:
 def _format_two_answers(first: RetrievedAnswer, second: RetrievedAnswer) -> str:
     return (
         "Возможны два релевантных варианта ответа по вашему запросу. "
-        "Пожалуйста, выберите тот, который точнее соответствует вашему контексту.\n\n"
+        "Пожалуйста, используйте тот, который точнее соответствует вашему контексту.\n\n"
         f"Ответ 1:\n{first.answer.text}\n\n"
         f"Ответ 2:\n{second.answer.text}"
     )
@@ -514,12 +526,21 @@ def answer_question_with_rag_v2(question: str):
     covered_candidates = [c for c in candidates if _candidate_has_query_coverage(question, c)]
 
     # "Ответ не найден" — только для явно нерелевантных запросов.
-    # Используем комбинацию слабого retriever-score и низкого лексического overlap.
+    # Используем только абсолютные низкие сигналы: слабый dense cosine + слабый overlap.
     top_overlap = _best_variant_overlap(question, top)
-    if not covered_candidates and (top.score_final < SCORE_THRESHOLD or top_overlap < 0.2):
+    if (
+        not covered_candidates
+        and top.score_dense_raw < LOW_RELEVANCE_DENSE_THRESHOLD
+        and top_overlap < LOW_RELEVANCE_OVERLAP_THRESHOLD
+    ):
         return NO_ANSWER_TEXT, None, candidates
 
-    selected_candidate = covered_candidates[0] if covered_candidates else top
+    ranked_candidates = covered_candidates if covered_candidates else candidates
+    if _should_return_two_answers(ranked_candidates):
+        first, second = ranked_candidates[0], ranked_candidates[1]
+        return _format_two_answers(first, second), [first.answer.id, second.answer.id], candidates
+
+    selected_candidate = ranked_candidates[0]
 
     # Для неточного совпадения используем RAG+LLM по одному лучшему выбранному ответу.
     # Передаем полный текст ответа (ans.text без обрезки) и ограниченный список вариантов вопросов.
@@ -582,6 +603,8 @@ def answer_question_logic_v2(question: str):
             "answer_id": c.answer.id,
             "score_dense": c.score_dense,
             "score_sparse": c.score_sparse,
+            "score_dense_raw": c.score_dense_raw,
+            "score_sparse_raw": c.score_sparse_raw,
             "score_final": c.score_final,
             "categories": c.answer.categories,
         }
@@ -658,6 +681,8 @@ def retrieve_answers_v1(
             return {k: 0.0 for k, v in scores.items()}
         return {k: v / mx for k, v in scores.items()}
 
+    # Важно: после такой нормализации лучший dense/sparse кандидат внутри текущей выборки
+    # получает score 1.0, поэтому 1.0 здесь означает "лучший в shortlist", а не "точное совпадение".
     dense_norm = normalize_scores(dense_scores)
     sparse_norm = normalize_scores(sparse_scores)
 
@@ -669,6 +694,8 @@ def retrieve_answers_v1(
     for ans_id in all_ids:
         sd = dense_norm.get(ans_id, 0.0)
         ss = sparse_norm.get(ans_id, 0.0)
+        sd_raw = dense_scores.get(ans_id, 0.0)
+        ss_raw = sparse_scores.get(ans_id, 0.0)
         final = ALPHA_DENSE * sd + (1.0 - ALPHA_DENSE) * ss
 
         payload = src_points[ans_id].payload or {}
