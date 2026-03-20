@@ -13,6 +13,56 @@ git show --name-only --format=fuller HEAD
 - commit: `8713c54`
 - title: `Improve v2 retrieval/answering logic, add raw scoring & multi-answer handling; update deployment checklist and tests`
 
+## Где обновленный код и JSON
+
+- Обновлённый **код приложения** лежит в `app.py`.
+- Обновлённые **тесты под эту логику** лежат в `tests/test_app_logic.py`.
+- Обновлённый **JSON с FAQ-данными** лежит в `qa_db_merged.json`.
+- Инструкции по деплою лежат в `TRANSFER_TO_OTHER_PC_AND_SERVER.md`.
+
+Быстрые команды, чтобы открыть именно их:
+
+```bash
+sed -n '1,260p' app.py
+sed -n '1,220p' tests/test_app_logic.py
+sed -n '1,120p' qa_db_merged.json
+sed -n '1,220p' TRANSFER_TO_OTHER_PC_AND_SERVER.md
+```
+
+## Как собрать проект из нового кода
+
+Собирать лучше из корня репозитория. Минимальный локальный сценарий:
+
+```bash
+cd /workspace/rag_ord_2
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+export QDRANT_URL=http://localhost:6333
+export QA_DB_PATH=./qa_db_merged.json
+export TFIDF_VOCAB_PATH=./tfidf_vocab.json
+python index_faq.py
+uvicorn app:app --host 127.0.0.1 --port 8010
+```
+
+Если нужен smoke-check после запуска:
+
+```bash
+curl -sS http://127.0.0.1:8010/health
+```
+
+Если у вас уже есть `.venv` и env-файл, тогда короткая версия такая:
+
+```bash
+cd /workspace/rag_ord_2
+source .venv/bin/activate
+export QDRANT_URL=http://localhost:6333
+export QA_DB_PATH=./qa_db_merged.json
+export TFIDF_VOCAB_PATH=./tfidf_vocab.json
+python index_faq.py
+uvicorn app:app --host 127.0.0.1 --port 8010
+```
+
 ## Что делать сейчас
 
 ### Если вам нужно просто понять, где были последние правки
