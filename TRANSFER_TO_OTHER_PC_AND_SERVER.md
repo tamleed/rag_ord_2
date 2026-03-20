@@ -1,6 +1,7 @@
 # Transfer checklist: deploy v2 in parallel to v1 (one server)
 
 Ниже — сценарий для **одного сервера**:
+- если нужно быстро понять, **где лежат последние изменения по коду**, сначала откройте `LATEST_CHANGES.md`
 - v1 в `/home/ubuntu/faq_rag_v1`
 - v2 в `/home/ubuntu/faq_rag_v2`
 - Qdrant в Docker, как на первом проекте (`qdrant/qdrant:latest`, порт `127.0.0.1:6333`)
