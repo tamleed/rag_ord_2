@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 
@@ -6,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from unittest.mock import patch
 
 import app
-from rag_core import Answer
+from rag_core import Answer, load_answers
 
 
 def make_candidate(
@@ -212,3 +213,27 @@ def test_more_than_four_close_candidates_asks_to_clarify():
 
     assert result["answer"] == app.TOO_MANY_RELEVANT_ANSWERS_TEXT
     assert result["answer_source"] == "rag_llm"
+
+
+def test_qa_db_merged_has_active_answers_with_active_question_variants():
+    answers = load_answers(str(Path(__file__).resolve().parents[1] / "qa_db_merged.json"))
+
+    active_answers = [a for a in answers if a.is_active]
+    assert active_answers, "qa_db_merged.json must contain active answers"
+    assert any(a.question_variants for a in active_answers), (
+        "qa_db_merged.json must contain at least one active answer with active question variants"
+    )
+
+
+def test_qa_db_merged_nested_question_ids_131_143_are_inactive():
+    data = json.loads((Path(__file__).resolve().parents[1] / "qa_db_merged.json").read_text(encoding="utf-8"))
+
+    found = []
+    for item in data:
+        for q in item.get("questions", []):
+            q_id = q.get("id")
+            if isinstance(q_id, int) and 131 <= q_id <= 143:
+                found.append((q_id, q.get("is_active", True)))
+
+    assert found, "Expected nested question ids 131-143 to exist in qa_db_merged.json"
+    assert all(is_active is False for _, is_active in found), found
