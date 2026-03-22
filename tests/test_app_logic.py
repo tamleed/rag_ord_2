@@ -50,6 +50,24 @@ def test_exact_raw_match_returns_faq_answer_without_rag():
     assert result["answer"] == "faq answer"
 
 
+def test_exact_raw_match_in_rag_v2_returns_database_answer_without_llm():
+    question = "exact raw question"
+    exact = Answer(id=101, text="faq answer", question_variants=[question], categories=["faq"], is_active=True)
+
+    with (
+        patch.object(app, "_match_exact_raw_question", return_value=exact),
+        patch.object(app, "call_llm_v2") as llm_mock,
+        patch.object(app, "retrieve_answers") as retrieve_mock,
+    ):
+        answer_text, answer_ids, candidates = app.answer_question_with_rag_v2(question)
+
+    retrieve_mock.assert_not_called()
+    llm_mock.assert_not_called()
+    assert answer_text == "faq answer"
+    assert answer_ids == [101]
+    assert candidates == []
+
+
 def test_high_relevance_non_exact_uses_rag_not_no_answer():
     candidate = make_candidate(1, "candidate answer", score_final=0.83, score_dense_raw=0.83)
 
@@ -137,6 +155,20 @@ def test_low_relevance_with_unavailable_model_returns_service_message():
     ):
         result = app.answer_question_logic_v2("irrelevant question")
 
+    assert result["answer"] == app.MODEL_UNAVAILABLE_TEXT
+    assert result["answer_source"] == "rag_llm"
+    assert result["answer_id"] is None
+
+
+def test_retrieval_failure_returns_service_message_not_no_answer():
+    with (
+        patch.object(app, "_match_exact_raw_question", return_value=None),
+        patch.object(app, "retrieve_answers", side_effect=RuntimeError("qdrant down")),
+        patch.object(app, "call_llm_v2") as llm_mock,
+    ):
+        result = app.answer_question_logic_v2("any question")
+
+    llm_mock.assert_not_called()
     assert result["answer"] == app.MODEL_UNAVAILABLE_TEXT
     assert result["answer_source"] == "rag_llm"
     assert result["answer_id"] is None

@@ -559,6 +559,10 @@ def _return_no_answer(question: str, candidates: List[RetrievedAnswer]):
     return _confirm_no_answer_with_llm(question), None, candidates
 
 
+def _return_service_unavailable(candidates: List[RetrievedAnswer]):
+    return MODEL_UNAVAILABLE_TEXT, None, candidates
+
+
 def answer_question_with_rag_v2(question: str):
     # Safety-net: даже при прямом вызове этой функции точные совпадения
     # возвращаем строго из базы и не отправляем в LLM.
@@ -569,8 +573,8 @@ def answer_question_with_rag_v2(question: str):
     try:
         candidates = retrieve_answers(question, top_k=5)
     except Exception:
-        # Не роняем v2 endpoint 500 при недоступном Qdrant/сети.
-        return _return_no_answer(question, [])
+        # Недоступность retrieval/Qdrant не должна маскироваться под "ответ не найден".
+        return _return_service_unavailable([])
 
     if not candidates:
         return _return_no_answer(question, candidates)

@@ -10,8 +10,8 @@
 
 ## 0) Verify branch on PC
 
-> Актуальная рабочая ветка для обновлённой v2: `codex/update-project-based-on-tester-feedback`.
-> Перед деплоем всё равно проверьте `git branch -a` и `git remote show origin`.
+> Актуальная рабочая ветка для обновлённой v2: `all_v2_1`.
+> Перед деплоем проверьте `git branch -a`, `git branch -r` и `git remote show origin`.
 
 ```bash
 git fetch --all --prune
@@ -25,8 +25,8 @@ git log --oneline -n 5
 Если remote доступен, для обновлённой v2 используйте только:
 
 ```bash
-git checkout codex/update-project-based-on-tester-feedback
-git pull --ff-only origin codex/update-project-based-on-tester-feedback
+git checkout all_v2_1
+git pull --ff-only origin all_v2_1
 ```
 
 ---
@@ -38,7 +38,7 @@ git pull --ff-only origin codex/update-project-based-on-tester-feedback
 ```bash
 ssh ubuntu@<SERVER_IP>
 cd /home/ubuntu
-git clone --branch codex/update-project-based-on-tester-feedback <GIT_REMOTE_URL> faq_rag_v2_new
+git clone --branch all_v2_1 <GIT_REMOTE_URL> faq_rag_v2_new
 cd faq_rag_v2_new
 git branch -a
 git branch -r
@@ -57,8 +57,8 @@ git branch -r
 git remote show origin
 git status -sb
 git log --oneline -n 5
-git checkout codex/update-project-based-on-tester-feedback
-git reset --hard origin/codex/update-project-based-on-tester-feedback
+git checkout all_v2_1
+git reset --hard origin/all_v2_1
 git clean -fd
 ```
 
