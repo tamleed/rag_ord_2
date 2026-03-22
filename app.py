@@ -24,7 +24,7 @@ from rag_core import (
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QA_DB_PATH = os.getenv("QA_DB_PATH", "./qa_db.json")
 TFIDF_VOCAB_PATH = os.getenv("TFIDF_VOCAB_PATH", "./tfidf_vocab.json")
-QA_DB_PATH_V2 = os.getenv("QA_DB_PATH_V2", QA_DB_PATH)
+QA_DB_PATH_V2 = os.getenv("QA_DB_PATH_V2", "./qa_db_merged.json")
 TFIDF_VOCAB_PATH_V2 = os.getenv("TFIDF_VOCAB_PATH_V2", TFIDF_VOCAB_PATH)
 COLLECTION_NAME = "faq"
 QDRANT_EXACT_SEARCH = os.getenv("QDRANT_EXACT_SEARCH", "1") == "1"

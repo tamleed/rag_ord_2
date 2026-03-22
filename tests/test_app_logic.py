@@ -237,3 +237,18 @@ def test_qa_db_merged_nested_question_ids_131_143_are_inactive():
 
     assert found, "Expected nested question ids 131-143 to exist in qa_db_merged.json"
     assert all(is_active is False for _, is_active in found), found
+
+
+def test_qa_db_merged_contains_active_cpa_variant():
+    data = json.loads((Path(__file__).resolve().parents[1] / "qa_db_merged.json").read_text(encoding="utf-8"))
+
+    for item in data:
+        if item.get("id") != 134:
+            continue
+        assert item.get("is_active") is True
+        for q in item.get("questions", []):
+            if (q.get("text") or "").strip() == "CPA?":
+                assert q.get("is_active") is True
+                return
+
+    raise AssertionError("Active CPA? variant for answer 134 not found in qa_db_merged.json")
