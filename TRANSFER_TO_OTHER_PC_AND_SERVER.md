@@ -1,6 +1,7 @@
 # Transfer checklist: deploy v2 in parallel to v1 (one server)
 
 Ниже — сценарий для **одного сервера**:
+- если нужно быстро понять, **где лежат последние изменения по коду**, сначала откройте `LATEST_CHANGES.md`
 - v1 в `/home/ubuntu/faq_rag_v1`
 - v2 в `/home/ubuntu/faq_rag_v2`
 - Qdrant в Docker, как на первом проекте (`qdrant/qdrant:latest`, порт `127.0.0.1:6333`)
@@ -9,13 +10,70 @@
 
 ## 0) Verify branch on PC
 
+> Актуальная рабочая ветка для обновлённой v2: `codex/update-project-based-on-tester-feedback`.
+> Перед деплоем всё равно проверьте `git branch -a` и `git remote show origin`.
+
 ```bash
 git fetch --all --prune
-git checkout codex-update
-git pull --ff-only
+git branch -a
+git branch -r
+git remote show origin
 git status -sb
 git log --oneline -n 5
 ```
+
+Если remote доступен, для обновлённой v2 используйте только:
+
+```bash
+git checkout codex/update-project-based-on-tester-feedback
+git pull --ff-only origin codex/update-project-based-on-tester-feedback
+```
+
+---
+
+## 0.1) Recommended: clone latest version into a new directory on server
+
+Если вы хотите поднять **новую директорию** рядом с существующей установкой, удобнее забирать код напрямую из git:
+
+```bash
+ssh ubuntu@<SERVER_IP>
+cd /home/ubuntu
+git clone --branch codex/update-project-based-on-tester-feedback <GIT_REMOTE_URL> faq_rag_v2_new
+cd faq_rag_v2_new
+git branch -a
+git branch -r
+git remote show origin
+git status -sb
+git log --oneline -n 5
+```
+
+Если `faq_rag_v2_new` уже существует:
+
+```bash
+cd /home/ubuntu/faq_rag_v2_new
+git fetch origin
+git branch -a
+git branch -r
+git remote show origin
+git status -sb
+git log --oneline -n 5
+git checkout codex/update-project-based-on-tester-feedback
+git reset --hard origin/codex/update-project-based-on-tester-feedback
+git clean -fd
+```
+
+> Если git-remote недоступен, используйте сценарий ниже через zip-архив.
+
+---
+
+## 0.2) Local files that must not go to git
+
+На сервере не коммитьте и не переносите обратно в git:
+
+- `.venv/`
+- `faq_rag_v2.env`
+- любые локальные `*.env` с ключами
+- runtime-логи, например `uvicorn_v2.log`
 
 ---
 
@@ -108,7 +166,23 @@ RAG_API_KEY=PUT_REAL_KEY_HERE
 
 ---
 
-## 6) Run v2 API on port 8010
+## 6) Rebuild search index after updating JSON / code
+
+После обновления проекта обязательно пересоберите TF-IDF и переиндексируйте Qdrant,
+иначе приложение перечитает новый `qa_db_merged.json`, но поиск может остаться на старых данных.
+
+```bash
+cd /home/ubuntu/faq_rag_v2
+source .venv/bin/activate
+set -a
+source ./faq_rag_v2.env
+set +a
+python index_faq.py
+```
+
+---
+
+## 7) Run v2 API on port 8010
 
 ```bash
 cd /home/ubuntu/faq_rag_v2
@@ -130,7 +204,7 @@ tail -n 80 /home/ubuntu/faq_rag_v2/uvicorn_v2.log
 
 ---
 
-## 7) nginx routing for v2
+## 8) nginx routing for v2
 
 Используйте **активный** site-файл nginx.
 
@@ -167,7 +241,7 @@ sudo systemctl reload nginx
 
 ---
 
-## 8) Smoke test
+## 9) Smoke test
 
 ```bash
 curl -sS -X POST http://127.0.0.1:8010/answer_full_v2 \
@@ -187,7 +261,7 @@ curl -sS -X POST https://response-v2.myapidev.ru/answer_full_v2 \
 
 ---
 
-## 9) Rollback v2 only
+## 10) Rollback v2 only
 
 ```bash
 pkill -f "uvicorn app:app --host 127.0.0.1 --port 8010" || true
