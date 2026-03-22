@@ -184,10 +184,14 @@ python index_faq.py
 
 ## 7) Run v2 API on port 8010
 
+> Для **CPU-only** сервера сначала установите CPU-версию `torch`, иначе `sentence-transformers` может транзитивно подтянуть CUDA-сборку PyTorch.
+
 ```bash
 cd /home/ubuntu/faq_rag_v2
 python3 -m venv .venv
 source .venv/bin/activate
+pip install --upgrade pip
+pip install --index-url https://download.pytorch.org/whl/cpu torch
 pip install -r requirements.txt
 set -a
 source ./faq_rag_v2.env
